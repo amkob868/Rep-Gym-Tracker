@@ -19,3 +19,23 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# --- Amplify backend definitions (not needed to review the app; can leak
+#     AWS account IDs / resource ARNs). The generated Swift models under
+#     amplify/generated are intentionally kept because the app compiles them. ---
+amplify/team-provider-info.json
+amplify/backend/
+amplify/.config/
+amplify/hooks/
+
+# --- Xcode / macOS ---
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+DerivedData/
+build/
+.DS_Store
+
+# --- Swift Package Manager ---
+.swiftpm/
+.build/

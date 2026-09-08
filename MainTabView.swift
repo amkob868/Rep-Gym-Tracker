@@ -3,10 +3,6 @@ import SwiftUI
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
 
-    init() {
-        print("🔥🔥🔥 MainTabView is being CREATED! hasCompletedOnboarding = \(AppState().hasCompletedOnboarding)")
-    }
-
     var body: some View {
         TabView {
             HomeView()
@@ -19,12 +15,6 @@ struct MainTabView: View {
                 .environmentObject(appState)
                 .tabItem {
                     Label("Progress", systemImage: "chart.bar.fill")
-                }
-            
-            SocialView()
-                .environmentObject(appState)
-                .tabItem {
-                    Label("Social", systemImage: "person.2.fill")
                 }
             
             ProfileView()
