@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import Amplify
 
 final class AppState: ObservableObject {
     @Published var hasCompletedOnboarding: Bool {
@@ -61,6 +62,33 @@ final class AppState: ObservableObject {
         // `streak` is recomputed from real workout history (see
         // WorkoutService.currentStreak); the persisted value is just the
         // last-known number shown until the first fetch completes.
+    }
+
+    /// If `error` indicates the Cognito session has expired / signed out,
+    /// clear the session so the app routes back to the login screen. Safe to
+    /// call from any data-loading error handler; it's a no-op otherwise.
+    func handleAuthError(_ error: Error) {
+        guard isSignedIn, AppState.isSessionExpired(error) else { return }
+        print("🔒 Session expired — signing out and returning to login")
+        isSignedIn = false
+        Task { _ = try? await Amplify.Auth.signOut() }
+    }
+
+    /// True when an error is Amplify's "session expired / signed out" case
+    /// (e.g. an expired refresh token surfaced as an APIError auth failure).
+    static func isSessionExpired(_ error: Error) -> Bool {
+        if let authError = error as? AuthError {
+            switch authError {
+            case .sessionExpired, .signedOut:
+                return true
+            default:
+                break
+            }
+        }
+        let text = "\(error)"
+        return text.contains("Session expired")
+            || text.contains("Refresh Token has expired")
+            || text.contains("could not fetch cognito tokens")
     }
 
     private let workoutPlans: [Goal: [WorkoutDay]] = [

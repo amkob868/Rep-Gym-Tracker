@@ -1,11 +1,10 @@
 import SwiftUI
 
 // MARK: - Workout Day Detail View
-/// Plan & track a single day's workout.
+/// Add, edit, and save the workout logged for a single day. Saved workouts
+/// show up on the calendar so users can track their history there.
 ///
-/// Replaces the near-identical `TodayDetailView` and `CalendarDayDetailView`.
-/// - `isToday`: adds the ordinal date suffix ("MARCH 31ST") and loads any
-///   existing workout for the day on appear / when a workout is saved.
+/// - `isToday`: adds the ordinal date suffix ("MARCH 31ST").
 /// - `showsCloseButton`: shows a close button in the header (used when the
 ///   view is presented directly as a sheet rather than inside a navigator).
 struct WorkoutDayDetailView: View {
@@ -18,10 +17,9 @@ struct WorkoutDayDetailView: View {
 
     @State private var exercises: [EditableExercise] = []
     @State private var showAddExercise = false
-    @State private var showWorkout = false
-    @State private var isCompleted = false
-    @State private var existingWorkout: Workout? = nil
-    @State private var isLoadingWorkout = false
+    @State private var isSaving = false
+    /// Name of an existing workout for this day, if one was already saved.
+    @State private var loadedWorkoutName: String?
 
     private var dayColor: Color { ForgeTheme.accentBulk }
 
@@ -40,14 +38,9 @@ struct WorkoutDayDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            if isToday { loadWorkoutData() }
-        }
+        .onAppear { loadWorkoutData() }
         .onReceive(NotificationCenter.default.publisher(for: .workoutSaved)) { _ in
-            if isToday {
-                print("📬 [WorkoutDayDetailView] Received WorkoutSaved notification, refreshing data")
-                loadWorkoutData()
-            }
+            loadWorkoutData()
         }
         .sheet(isPresented: $showAddExercise) {
             AddExerciseView(dayColor: dayColor) { newExercise in
@@ -55,10 +48,6 @@ struct WorkoutDayDetailView: View {
                     exercises.append(newExercise)
                 }
             }
-        }
-        .sheet(isPresented: $showWorkout) {
-            ActiveWorkoutView(exercises: WorkoutService.exercises(from: exercises), workoutDate: date)
-                .environmentObject(appState)
         }
     }
 
@@ -72,7 +61,7 @@ struct WorkoutDayDetailView: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.6)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("PLAN & TRACK YOUR WORKOUT")
+                Text("TRACK YOUR WORKOUT")
                     .font(ForgeTheme.nunito(11, weight: .heavy))
                     .tracking(1.5)
                     .foregroundColor(ForgeTheme.textMuted)
@@ -101,7 +90,6 @@ struct WorkoutDayDetailView: View {
                 if exercises.isEmpty {
                     emptyState
                 } else {
-                    completionButton
                     ForEach(Array(exercises.enumerated()), id: \.element.id) { index, exercise in
                         ExerciseEditorCard(
                             exercise: binding(for: exercise),
@@ -149,7 +137,7 @@ struct WorkoutDayDetailView: View {
     private var bottomBar: some View {
         VStack(spacing: 12) {
             if !exercises.isEmpty {
-                startWorkoutButton
+                saveWorkoutButton
             }
             addExerciseButton
         }
@@ -158,36 +146,18 @@ struct WorkoutDayDetailView: View {
         .padding(.top, 12)
     }
 
-    private var startWorkoutButton: some View {
+    private var saveWorkoutButton: some View {
         Button {
-            isLoadingWorkout = true
-            Task {
-                do {
-                    let fetchedWorkout = try await WorkoutService.fetchWorkout(for: date)
-                    await MainActor.run {
-                        existingWorkout = fetchedWorkout
-                        isLoadingWorkout = false
-                        showWorkout = true
-                        print(fetchedWorkout != nil ? "📝 Loading existing workout" : "✨ Starting fresh workout")
-                    }
-                } catch {
-                    print("⚠️ Error checking for existing workout: \(error)")
-                    await MainActor.run {
-                        existingWorkout = nil
-                        isLoadingWorkout = false
-                        showWorkout = true
-                    }
-                }
-            }
+            Task { await saveWorkout() }
         } label: {
             HStack(spacing: 8) {
-                if isLoadingWorkout {
+                if isSaving {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 } else {
-                    Image(systemName: "play.fill")
+                    Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 18, weight: .bold))
-                    Text("START WORKOUT")
+                    Text("SAVE WORKOUT")
                         .font(ForgeTheme.bebas(22))
                         .tracking(2)
                 }
@@ -199,7 +169,7 @@ struct WorkoutDayDetailView: View {
             .cornerRadius(16)
             .shadow(color: ForgeTheme.accentBulk.opacity(0.3), radius: 12, x: 0, y: 6)
         }
-        .disabled(isLoadingWorkout)
+        .disabled(isSaving)
     }
 
     private var addExerciseButton: some View {
@@ -222,67 +192,40 @@ struct WorkoutDayDetailView: View {
         }
     }
 
-    // MARK: - Completion button
-    private var completionButton: some View {
-        Button {
-            withAnimation(.spring(response: 0.3)) {
-                isCompleted.toggle()
-            }
-        } label: {
-            completionButtonContent
-        }
-        .buttonStyle(.plain)
-        .padding(.bottom, 12)
-    }
-
-    private var completionButtonContent: some View {
-        HStack(spacing: 12) {
-            Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(isCompleted ? dayColor : ForgeTheme.textMuted)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(isCompleted ? "WORKOUT COMPLETED! 🎉" : "MARK AS COMPLETE")
-                    .font(ForgeTheme.nunito(12, weight: .heavy))
-                    .tracking(1)
-                    .foregroundColor(isCompleted ? dayColor : .white)
-                if isCompleted {
-                    Text("Great job! Keep it up.")
-                        .font(ForgeTheme.nunito(11, weight: .semibold))
-                        .foregroundColor(ForgeTheme.textMuted)
-                }
-            }
-            Spacer()
-        }
-        .padding(16)
-        .background(completionButtonBackground)
-    }
-
-    private var completionButtonBackground: some View {
-        let fillColor = isCompleted ? dayColor.opacity(0.15) : ForgeTheme.surface2
-        let strokeColor = isCompleted ? dayColor.opacity(0.4) : ForgeTheme.border
-        return RoundedRectangle(cornerRadius: 16)
-            .fill(fillColor)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(strokeColor, lineWidth: 1.5)
-            )
-    }
-
     // MARK: - Data
     private func loadWorkoutData() {
         Task {
             do {
                 if let workout = try await WorkoutService.fetchWorkout(for: date) {
-                    print("✅ [WorkoutDayDetailView] Found existing workout")
                     await MainActor.run {
                         self.exercises = WorkoutService.editableExercises(from: workout)
-                        self.existingWorkout = workout
+                        self.loadedWorkoutName = workout.name
                     }
-                } else {
-                    print("ℹ️ [WorkoutDayDetailView] No workout found for date")
                 }
             } catch {
                 print("❌ [WorkoutDayDetailView] Error loading workout: \(error)")
+                await MainActor.run { appState.handleAuthError(error) }
+            }
+        }
+    }
+
+    private func saveWorkout() async {
+        isSaving = true
+        let name = loadedWorkoutName ?? appState.todayName
+        let completed = WorkoutService.completedExercises(from: exercises)
+
+        do {
+            _ = try await WorkoutService.saveWorkout(name: name, date: date, exercises: completed)
+            NotificationCenter.default.post(name: .workoutSaved, object: nil)
+            await MainActor.run {
+                isSaving = false
+                dismiss()
+            }
+        } catch {
+            print("❌ [WorkoutDayDetailView] Error saving workout: \(error)")
+            await MainActor.run {
+                isSaving = false
+                appState.handleAuthError(error)
             }
         }
     }

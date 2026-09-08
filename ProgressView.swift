@@ -383,6 +383,7 @@ struct ProgressTrackingView: View {
             } catch {
                 self.isLoadingWorkouts = false
                 print("❌ Error loading workouts: \(error)")
+                appState.handleAuthError(error)
             }
         }
     }
@@ -485,7 +486,7 @@ struct WorkoutHistoryItem: Identifiable {
     init(workout: Workout) {
         id = workout.id
         name = workout.name
-        date = workout.date.foundationDate
+        date = WorkoutService.loggedDay(of: workout)
         
         let mappedExercises = workout.exercises?.compactMap { exercise -> WorkoutHistoryExercise? in
             guard let exercise else { return nil }

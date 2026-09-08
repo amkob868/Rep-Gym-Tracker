@@ -256,6 +256,7 @@ struct HomeView: View {
             print("❌ [HomeView] Error fetching today's workout: \(error)")
             await MainActor.run {
                 self.todaysWorkout = nil
+                appState.handleAuthError(error)
             }
         }
     }
@@ -325,6 +326,7 @@ struct HomeView: View {
                 }
             } catch {
                 print("❌ [HomeView] Error loading home stats: \(error)")
+                await MainActor.run { appState.handleAuthError(error) }
             }
         }
     }
@@ -1465,9 +1467,10 @@ struct WorkoutCalendarView: View {
     @State private var isDragging = false
     @State private var didDrag = false  // Track if user actually dragged
     @State private var isLoading = false
-    @State private var showCalendarDayDetail = false
-    @State private var selectedCalendarDate: Date?
-    @State private var showCompletedWorkout = false
+    // A single sheet source of truth. Two separate `.sheet(isPresented:)`
+    // modifiers on one view is a SwiftUI defect where one silently fails to
+    // present — which made tapping a day appear to do nothing.
+    @State private var activeSheet: CalendarDaySheet?
     
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 7)
     private let weekDaySymbols = ForgeTheme.weekdaySymbolsSundayFirst
@@ -1480,17 +1483,17 @@ struct WorkoutCalendarView: View {
         components.day = 1
         return Calendar.current.date(from: components) ?? Date()
     }
-    
+
     private var previousMonth: Date? {
         guard canGoToPreviousMonth() else { return nil }
         return Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth)
     }
-    
+
     private var nextMonth: Date? {
         guard canGoToNextMonth() else { return nil }
         return Calendar.current.date(byAdding: .month, value: 1, to: selectedMonth)
     }
-    
+
     private func monthYearString(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
@@ -1572,14 +1575,12 @@ struct WorkoutCalendarView: View {
         .onReceive(NotificationCenter.default.publisher(for: .workoutSaved)) { _ in
             loadWorkoutData()
         }
-        .sheet(isPresented: $showCalendarDayDetail) {
-            if let date = selectedCalendarDate {
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .detail(let date):
                 WorkoutDayDetailView(date: date, showsCloseButton: true)
                     .environmentObject(appState)
-            }
-        }
-        .sheet(isPresented: $showCompletedWorkout) {
-            if let date = selectedCalendarDate {
+            case .completed(let date):
                 CompletedWorkoutView(workoutDate: date)
             }
         }
@@ -1717,52 +1718,39 @@ struct WorkoutCalendarView: View {
         let shouldGoToNext = (value.translation.width < -threshold || velocity < -100) && canGoToNextMonth()
 
         if shouldGoToPrevious {
-            // Animate to previous month - slide current month off to the right
             withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                 dragOffset = screenWidth
             }
-
-            // After animation completes, update the month and reset offset
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 selectedMonth = Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth) ?? selectedMonth
                 dragOffset = 0
-                // Delay re-enabling hit testing to prevent accidental taps
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     isDragging = false
-                    // Reset didDrag after animation completes
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         didDrag = false
                     }
                 }
             }
         } else if shouldGoToNext {
-            // Animate to next month - slide current month off to the left
             withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                 dragOffset = -screenWidth
             }
-
-            // After animation completes, update the month and reset offset
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 selectedMonth = Calendar.current.date(byAdding: .month, value: 1, to: selectedMonth) ?? selectedMonth
                 dragOffset = 0
-                // Delay re-enabling hit testing to prevent accidental taps
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     isDragging = false
-                    // Reset didDrag after animation completes
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         didDrag = false
                     }
                 }
             }
         } else {
-            // Bounce back to current month
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                 dragOffset = 0
             }
-            // Small delay to prevent tap during bounce animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 isDragging = false
-                // Reset didDrag after bounce completes
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     didDrag = false
                 }
@@ -1782,7 +1770,7 @@ struct WorkoutCalendarView: View {
 
                 var dates: Set<DateComponents> = []
                 for workout in workouts {
-                    let workoutDate = workout.date.foundationDate
+                    let workoutDate = WorkoutService.loggedDay(of: workout)
                     let components = Calendar.current.dateComponents([.year, .month, .day], from: workoutDate)
                     dates.insert(components)
                 }
@@ -1796,6 +1784,7 @@ struct WorkoutCalendarView: View {
             } catch {
                 await MainActor.run {
                     self.isLoading = false
+                    appState.handleAuthError(error)
                 }
                 print("❌ Error loading workouts for calendar: \(error)")
             }
@@ -1808,19 +1797,32 @@ struct WorkoutCalendarView: View {
             didDrag = false  // Reset the flag
             return
         }
-        
+
         let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
         
         if workoutDates.contains(components) {
-            // Already completed - show completed workout view
-            selectedCalendarDate = date
-            showCompletedWorkout = true
+            // Already has a workout — show the completed workout view.
+            activeSheet = .completed(date)
         } else if !isFutureDate(date) {
-            // Not completed and not future - show calendar day detail
-            selectedCalendarDate = date
-            showCalendarDayDetail = true
+            // Empty, non-future day — open the day editor to log a workout.
+            activeSheet = .detail(date)
         }
         // Future dates do nothing
+    }
+}
+
+// MARK: - Calendar Sheet
+/// Drives a single `.sheet(item:)` for the calendar so the two presentations
+/// don't collide (two `.sheet` on one view is a SwiftUI presentation bug).
+enum CalendarDaySheet: Identifiable {
+    case detail(Date)
+    case completed(Date)
+
+    var id: String {
+        switch self {
+        case .detail(let date): return "detail-\(date.timeIntervalSince1970)"
+        case .completed(let date): return "completed-\(date.timeIntervalSince1970)"
+        }
     }
 }
 

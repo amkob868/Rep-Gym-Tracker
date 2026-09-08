@@ -107,8 +107,6 @@ struct ActiveWorkoutView: View {
     let workoutDate: Date
     
     @StateObject private var trackedExercises: TrackedExercisesContainer
-    @State private var elapsed = 0
-    @State private var timer: Timer? = nil
     @State private var showCancelAlert = false
     @State private var showDone = false
     @State private var expandedExerciseId: UUID? = nil
@@ -190,10 +188,6 @@ struct ActiveWorkoutView: View {
                             
                             HStack(spacing: 16) {
                                 Label(formatDate(Date()), systemImage: "calendar")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.gray)
-                                
-                                Label(timeString(elapsed), systemImage: "clock")
                                     .font(.system(size: 15))
                                     .foregroundColor(.gray)
                             }
@@ -427,8 +421,6 @@ struct ActiveWorkoutView: View {
                 )
             }
         }
-        .onAppear { startTimer() }
-        .onDisappear { timer?.invalidate() }
         .alert("Cancel Workout?", isPresented: $showCancelAlert) {
             Button("Keep Going", role: .cancel) { }
             Button("Yes, Cancel", role: .destructive) {
@@ -439,23 +431,12 @@ struct ActiveWorkoutView: View {
         }
         .workoutModal(isPresented: $showDone) {
             WorkoutDoneView(
-                elapsed: elapsed,
                 setsCompleted: completedSets,
                 exerciseCount: exercises.count
             ) {
                 dismiss()
             }
         }
-    }
-    
-    func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            elapsed += 1
-        }
-    }
-    
-    func timeString(_ s: Int) -> String {
-        String(format: "%d:%02d", s / 60, s % 60)
     }
     
     func formatDate(_ date: Date) -> String {
@@ -465,9 +446,7 @@ struct ActiveWorkoutView: View {
     }
     
     func finishWorkout() {
-        timer?.invalidate()
-        
-        // Fix 2: Dismiss keyboard to ensure TextField values are committed
+        // Dismiss keyboard to ensure TextField values are committed
         #if os(iOS)
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         #endif
@@ -502,6 +481,7 @@ struct ActiveWorkoutView: View {
             }
         } catch {
             print("❌ Error saving workout: \(error)")
+            await MainActor.run { appState.handleAuthError(error) }
         }
     }
 }
@@ -812,7 +792,6 @@ struct RestTimerBar: View {
 
 // MARK: - Workout Done
 struct WorkoutDoneView: View {
-    let elapsed: Int
     let setsCompleted: Int
     let exerciseCount: Int
     let onDismiss: () -> Void
@@ -833,7 +812,6 @@ struct WorkoutDoneView: View {
                         .foregroundColor(ForgeTheme.textMuted)
                 }
                 HStack(spacing: 10) {
-                    DoneStat(value: String(format: "%d:%02d", elapsed/60, elapsed%60), label: "Duration")
                     DoneStat(value: "\(setsCompleted)", label: "Sets")
                     DoneStat(value: "\(exerciseCount)", label: "Exercises")
                 }

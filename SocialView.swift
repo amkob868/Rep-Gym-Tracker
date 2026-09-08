@@ -231,7 +231,7 @@ struct SocialView: View {
                 formatter.unitsStyle = .full
 
                 let mapped = workouts
-                    .sorted { $0.date.foundationDate > $1.date.foundationDate }
+                    .sorted { WorkoutService.loggedDay(of: $0) > WorkoutService.loggedDay(of: $1) }
                     .map { workout -> Activity in
                         let exercises = (workout.exercises ?? []).compactMap { $0 }
                         let sets = exercises.reduce(0) { $0 + ($1.sets?.count ?? 0) }
@@ -243,7 +243,7 @@ struct SocialView: View {
                             userInitial: initial,
                             action: "completed",
                             workout: workout.name,
-                            timeAgo: formatter.localizedString(for: workout.date.foundationDate, relativeTo: Date()),
+                            timeAgo: formatter.localizedString(for: WorkoutService.loggedDay(of: workout), relativeTo: Date()),
                             stats: ActivityStats(sets: sets, weight: Int(volume)),
                             goalColor: goalColor
                         )
@@ -254,7 +254,10 @@ struct SocialView: View {
                     self.isLoading = false
                 }
             } catch {
-                await MainActor.run { self.isLoading = false }
+                await MainActor.run {
+                    self.isLoading = false
+                    appState.handleAuthError(error)
+                }
                 print("❌ [SocialView] Error loading activity: \(error)")
             }
         }

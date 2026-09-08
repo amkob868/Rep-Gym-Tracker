@@ -2,6 +2,7 @@ import SwiftUI
 import Amplify
 import AWSCognitoAuthPlugin
 import AWSAPIPlugin
+import AWSPluginsCore
 
 @main
 struct ForgeApp: App {
@@ -70,11 +71,21 @@ struct LaunchScreenCoordinator: View {
                 // The Cognito session is the source of truth for "signed in".
                 // A transient error just means "treat as signed out for now" —
                 // we never wipe onboarding progress here.
-                let signedIn: Bool
+                var signedIn: Bool
                 do {
                     let session = try await Amplify.Auth.fetchAuthSession()
                     signedIn = session.isSignedIn
-                    print(session.isSignedIn ? "✅ Existing session restored" : "ℹ️ No active session")
+
+                    // `isSignedIn` can be true even when the refresh token has
+                    // expired — the failure only surfaces when tokens are
+                    // actually requested. Force that check now so an expired
+                    // session routes to login instead of failing every API call.
+                    if signedIn, let provider = session as? AuthCognitoTokensProvider,
+                       case .failure = provider.getCognitoTokens() {
+                        signedIn = false
+                        _ = try? await Amplify.Auth.signOut()
+                    }
+                    print(signedIn ? "✅ Existing session restored" : "ℹ️ No active/valid session")
                 } catch {
                     print("❌ Session check failed: \(error)")
                     signedIn = false
