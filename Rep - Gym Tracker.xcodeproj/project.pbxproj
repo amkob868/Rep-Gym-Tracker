@@ -16,22 +16,16 @@
 		890EC69BAA435D6C07311F45 /* CompletedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE3492E630FDE04A2F08301 /* CompletedSet.swift */; };
 		8FEDA39250B181CE3E65E831 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 12767C1087B8F215C1483F65 /* awsconfiguration.json */; };
 		AE9C0E312F73570300E3A0B3 /* ForgeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E212F73570300E3A0B3 /* ForgeTheme.swift */; };
-		AE9C0E322F73570300E3A0B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E1E2F73570300E3A0B3 /* ContentView.swift */; };
 		AE9C0E332F73570300E3A0B3 /* FORGEApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E1F2F73570300E3A0B3 /* FORGEApp.swift */; };
-		AE9C0E352F73570300E3A0B3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E242F73570300E3A0B3 /* OnboardingView.swift */; };
 		AE9C0E362F73570300E3A0B3 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E232F73570300E3A0B3 /* MainTabView.swift */; };
 		AE9C0E372F73570300E3A0B3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E1D2F73570300E3A0B3 /* AppState.swift */; };
 		AE9C0E382F73570300E3A0B3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E222F73570300E3A0B3 /* HomeView.swift */; };
-		AE9C0E392F73570300E3A0B3 /* RestTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E252F73570300E3A0B3 /* RestTimerView.swift */; };
-		AE9C0E3A2F73570300E3A0B3 /* WorkoutViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E262F73570300E3A0B3 /* WorkoutViews.swift */; };
 		AE9C0E482F73605200E3A0B3 /* BebasNeue-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AE9C0E472F73605200E3A0B3 /* BebasNeue-Regular.ttf */; };
 		AE9C0E6E2F74931D00E3A0B3 /* App logo Final.png in Resources */ = {isa = PBXBuildFile; fileRef = AE9C0E6B2F74931D00E3A0B3 /* App logo Final.png */; };
 		AE9C0E742F749F5600E3A0B3 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E732F749F5600E3A0B3 /* LaunchScreenView.swift */; };
 		AE9C0E932F74B13A00E3A0B3 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E912F74B13A00E3A0B3 /* ProfileView.swift */; };
 		AE9C0E962F74B15200E3A0B3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E952F74B15200E3A0B3 /* SettingsView.swift */; };
 		AE9C0EA02F74B44700E3A0B3 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0E9D2F74B44700E3A0B3 /* ProgressView.swift */; };
-		AE9C0EA22F759A0500E3A0B3 /* SocialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0EA12F759A0500E3A0B3 /* SocialView.swift */; };
-		AE9C0EA62F75D4F400E3A0B3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0EA52F75D4F400E3A0B3 /* AuthenticationView.swift */; };
 		AE9C0EA82F75D51000E3A0B3 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0EA72F75D51000E3A0B3 /* OnboardingFlowView.swift */; };
 		AE9C0EBC2F7A507900E3A0B3 /* Amplify in Frameworks */ = {isa = PBXBuildFile; productRef = AE9C0EBB2F7A507900E3A0B3 /* Amplify */; };
 		AE9C0EBE2F7A508300E3A0B3 /* AWSCognitoAuthPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = AE9C0EBD2F7A508300E3A0B3 /* AWSCognitoAuthPlugin */; };
@@ -58,22 +52,16 @@
 		9DA128648EDC4BFF374819E3 /* CompletedSet+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "CompletedSet+Schema.swift"; path = "amplify/generated/models/CompletedSet+Schema.swift"; sourceTree = "<group>"; };
 		AE9C0DF32F7356B300E3A0B3 /* Rep - Gym Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rep - Gym Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE9C0E1D2F73570300E3A0B3 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		AE9C0E1E2F73570300E3A0B3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AE9C0E1F2F73570300E3A0B3 /* FORGEApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FORGEApp.swift; sourceTree = "<group>"; };
 		AE9C0E212F73570300E3A0B3 /* ForgeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeTheme.swift; sourceTree = "<group>"; };
 		AE9C0E222F73570300E3A0B3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		AE9C0E232F73570300E3A0B3 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		AE9C0E242F73570300E3A0B3 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		AE9C0E252F73570300E3A0B3 /* RestTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimerView.swift; sourceTree = "<group>"; };
-		AE9C0E262F73570300E3A0B3 /* WorkoutViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutViews.swift; sourceTree = "<group>"; };
 		AE9C0E472F73605200E3A0B3 /* BebasNeue-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BebasNeue-Regular.ttf"; sourceTree = "<group>"; };
 		AE9C0E6B2F74931D00E3A0B3 /* App logo Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "App logo Final.png"; sourceTree = "<group>"; };
 		AE9C0E732F749F5600E3A0B3 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		AE9C0E912F74B13A00E3A0B3 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		AE9C0E952F74B15200E3A0B3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AE9C0E9D2F74B44700E3A0B3 /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		AE9C0EA12F759A0500E3A0B3 /* SocialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialView.swift; sourceTree = "<group>"; };
-		AE9C0EA52F75D4F400E3A0B3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		AE9C0EA72F75D51000E3A0B3 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		AE9C0EC12F7A63D300E3A0B3 /* amplifybackendapigymreptrackerschema.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = amplifybackendapigymreptrackerschema.graphql; sourceTree = "<group>"; };
 		AED15E372F7AE0E2001E6236 /* WorkoutNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutNotifications.swift; sourceTree = "<group>"; };
@@ -146,15 +134,11 @@
 			children = (
 				AE9C0E1F2F73570300E3A0B3 /* FORGEApp.swift */,
 				AE9C0E1D2F73570300E3A0B3 /* AppState.swift */,
-				AE9C0E1E2F73570300E3A0B3 /* ContentView.swift */,
 				AE9C0E212F73570300E3A0B3 /* ForgeTheme.swift */,
 				AE9C0E222F73570300E3A0B3 /* HomeView.swift */,
 				AE9C0E232F73570300E3A0B3 /* MainTabView.swift */,
-				AE9C0E242F73570300E3A0B3 /* OnboardingView.swift */,
 				AE9C0E6B2F74931D00E3A0B3 /* App logo Final.png */,
-				AE9C0E252F73570300E3A0B3 /* RestTimerView.swift */,
 				AE9C0E472F73605200E3A0B3 /* BebasNeue-Regular.ttf */,
-				AE9C0E262F73570300E3A0B3 /* WorkoutViews.swift */,
 				AE9C0DF52F7356B300E3A0B3 /* Forge Workout App */,
 				AE9C0E032F7356B500E3A0B3 /* Forge Workout AppTests */,
 				AE9C0E0D2F7356B500E3A0B3 /* Forge Workout AppUITests */,
@@ -163,8 +147,6 @@
 				AE9C0E912F74B13A00E3A0B3 /* ProfileView.swift */,
 				AE9C0E952F74B15200E3A0B3 /* SettingsView.swift */,
 				AE9C0E9D2F74B44700E3A0B3 /* ProgressView.swift */,
-				AE9C0EA12F759A0500E3A0B3 /* SocialView.swift */,
-				AE9C0EA52F75D4F400E3A0B3 /* AuthenticationView.swift */,
 				AE9C0EA72F75D51000E3A0B3 /* OnboardingFlowView.swift */,
 				2EBA08ACA51BC429748DD1F9 /* AmplifyConfig */,
 				AE9C0EBA2F7A507900E3A0B3 /* Frameworks */,
@@ -278,23 +260,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE9C0E312F73570300E3A0B3 /* ForgeTheme.swift in Sources */,
-				AE9C0E322F73570300E3A0B3 /* ContentView.swift in Sources */,
 				AE9C0E332F73570300E3A0B3 /* FORGEApp.swift in Sources */,
-				AE9C0E352F73570300E3A0B3 /* OnboardingView.swift in Sources */,
 				AED15E3A2F7AE10B001E6236 /* DebugWorkoutsView.swift in Sources */,
 				AE9C0E362F73570300E3A0B3 /* MainTabView.swift in Sources */,
 				AE9C0E742F749F5600E3A0B3 /* LaunchScreenView.swift in Sources */,
 				AE9C0E372F73570300E3A0B3 /* AppState.swift in Sources */,
 				AE9C0E382F73570300E3A0B3 /* HomeView.swift in Sources */,
-				AE9C0E392F73570300E3A0B3 /* RestTimerView.swift in Sources */,
 				AE9C0EA82F75D51000E3A0B3 /* OnboardingFlowView.swift in Sources */,
 				AE9C0E962F74B15200E3A0B3 /* SettingsView.swift in Sources */,
 				AE9C0E932F74B13A00E3A0B3 /* ProfileView.swift in Sources */,
-				AE9C0E3A2F73570300E3A0B3 /* WorkoutViews.swift in Sources */,
 				AED15E3C2F7AE6C2001E6236 /* AmplifyHelpers.swift in Sources */,
 				AE9C0EA02F74B44700E3A0B3 /* ProgressView.swift in Sources */,
-				AE9C0EA22F759A0500E3A0B3 /* SocialView.swift in Sources */,
-				AE9C0EA62F75D4F400E3A0B3 /* AuthenticationView.swift in Sources */,
 				AED15E382F7AE0E2001E6236 /* WorkoutNotifications.swift in Sources */,
 				642481C5D38A08BEBA4C3CBB /* AmplifyModels.swift in Sources */,
 				70C01F59CE6FE88760D6BE27 /* CompletedExercise+Schema.swift in Sources */,
