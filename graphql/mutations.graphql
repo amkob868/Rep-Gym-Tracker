@@ -1,0 +1,118 @@
+# this is an auto generated file. This will be overwritten
+
+mutation CreateUserProfile(
+  $input: CreateUserProfileInput!
+  $condition: ModelUserProfileConditionInput
+) {
+  createUserProfile(input: $input, condition: $condition) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation UpdateUserProfile(
+  $input: UpdateUserProfileInput!
+  $condition: ModelUserProfileConditionInput
+) {
+  updateUserProfile(input: $input, condition: $condition) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation DeleteUserProfile(
+  $input: DeleteUserProfileInput!
+  $condition: ModelUserProfileConditionInput
+) {
+  deleteUserProfile(input: $input, condition: $condition) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation CreateWorkout(
+  $input: CreateWorkoutInput!
+  $condition: ModelWorkoutConditionInput
+) {
+  createWorkout(input: $input, condition: $condition) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation UpdateWorkout(
+  $input: UpdateWorkoutInput!
+  $condition: ModelWorkoutConditionInput
+) {
+  updateWorkout(input: $input, condition: $condition) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation DeleteWorkout(
+  $input: DeleteWorkoutInput!
+  $condition: ModelWorkoutConditionInput
+) {
+  deleteWorkout(input: $input, condition: $condition) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}

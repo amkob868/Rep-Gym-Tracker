@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Forge Workout App
+//  FORGE
 //
 //  Created by Alexander Kobinski on 3/24/26.
 //

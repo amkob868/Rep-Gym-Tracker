@@ -1,0 +1,118 @@
+# this is an auto generated file. This will be overwritten
+
+subscription OnCreateUserProfile(
+  $filter: ModelSubscriptionUserProfileFilterInput
+  $owner: String
+) {
+  onCreateUserProfile(filter: $filter, owner: $owner) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnUpdateUserProfile(
+  $filter: ModelSubscriptionUserProfileFilterInput
+  $owner: String
+) {
+  onUpdateUserProfile(filter: $filter, owner: $owner) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnDeleteUserProfile(
+  $filter: ModelSubscriptionUserProfileFilterInput
+  $owner: String
+) {
+  onDeleteUserProfile(filter: $filter, owner: $owner) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnCreateWorkout(
+  $filter: ModelSubscriptionWorkoutFilterInput
+  $owner: String
+) {
+  onCreateWorkout(filter: $filter, owner: $owner) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnUpdateWorkout(
+  $filter: ModelSubscriptionWorkoutFilterInput
+  $owner: String
+) {
+  onUpdateWorkout(filter: $filter, owner: $owner) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnDeleteWorkout(
+  $filter: ModelSubscriptionWorkoutFilterInput
+  $owner: String
+) {
+  onDeleteWorkout(filter: $filter, owner: $owner) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}

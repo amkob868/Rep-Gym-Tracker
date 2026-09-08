@@ -1,0 +1,78 @@
+# this is an auto generated file. This will be overwritten
+
+query GetUserProfile($id: ID!) {
+  getUserProfile(id: $id) {
+    id
+    userName
+    goal
+    height
+    weight
+    desiredWeight
+    streak
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+query ListUserProfiles(
+  $filter: ModelUserProfileFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUserProfiles(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      userName
+      goal
+      height
+      weight
+      desiredWeight
+      streak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetWorkout($id: ID!) {
+  getWorkout(id: $id) {
+    id
+    date
+    name
+    exercises {
+      name
+      emoji
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+query ListWorkouts(
+  $filter: ModelWorkoutFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listWorkouts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      date
+      name
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}

@@ -1,0 +1,39 @@
+type UserProfile @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  userName: String!
+  goal: String!
+  height: Int!
+  weight: Int!
+  desiredWeight: Int!
+  streak: Int!
+}
+
+type Workout @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  date: AWSDate!
+  name: String!
+  exercises: [CompletedExercise]
+}
+
+type CompletedExercise {
+  name: String!
+  emoji: String!
+  sets: [CompletedSet]
+}
+
+type CompletedSet {
+  setNumber: Int!
+  weight: Float!
+  reps: Int!
+}
+
+type SocialPost @model @auth(rules: [{allow: owner, operations: [create, update, delete]}, {allow: public, operations: [read]}]) {
+  id: ID!
+  userName: String!
+  workoutName: String!
+  date: AWSDate!
+  exerciseCount: Int!
+  totalSets: Int!
+  duration: Int!
+  createdAt: AWSDateTime!
+}
