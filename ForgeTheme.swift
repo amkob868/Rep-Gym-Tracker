@@ -22,6 +22,11 @@ struct ForgeTheme {
     static let accentCut    = Color(hex: "00d4ff")  // Bright Cyan Blue
     static let accentRecomp = Color(hex: "5e5ce6")  // Electric Blue
 
+    // MARK: - Weekday header symbols
+    // Ordering matters — use the variant that matches the grid's first weekday.
+    static let weekdaySymbolsSundayFirst = ["S", "M", "T", "W", "T", "F", "S"]
+    static let weekdaySymbolsMondayFirst = ["M", "T", "W", "T", "F", "S", "S"]
+
     // MARK: - Day colors
     static let dayColors: [Color] = [
         Color(hex: "0a84ff"),  // iOS Blue

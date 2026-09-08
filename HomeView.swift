@@ -13,12 +13,6 @@ struct HomeView: View {
     @State private var isLoadingTodaysWorkout = false
     @State private var personalRecords: [PersonalRecord] = []
 
-    let weekDays = ["M","T","W","T","F","S","S"]
-    let weekDayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-    let completedDays = [true, true, false, true, false, false, false]
-    let restDays = [false, false, true, false, false, true, false]
-    let todayIndex = 3
-    
     // Get current date info
     private var currentDayOfWeek: String {
         let formatter = DateFormatter()
@@ -1476,7 +1470,7 @@ struct WorkoutCalendarView: View {
     @State private var showCompletedWorkout = false
     
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 7)
-    private let weekDaySymbols = ["S", "M", "T", "W", "T", "F", "S"]
+    private let weekDaySymbols = ForgeTheme.weekdaySymbolsSundayFirst
     
     // Starting from January 2025
     private var startDate: Date {
@@ -1956,7 +1950,7 @@ struct WeekCarouselView: View {
     @State private var showCompletedWorkout = false
     @State private var selectedWorkoutDate: Date?
     
-    private let weekDays = ["M","T","W","T","F","S","S"]
+    private let weekDays = ForgeTheme.weekdaySymbolsMondayFirst
     
     // Get the start of the current week (Monday)
     private var currentWeekStart: Date {
