@@ -197,7 +197,7 @@ struct SignupScreen: View {
                 appleSignInError = "Sign in with Apple needs another step. Please continue with email."
             }
         } catch {
-            print("❌ Apple sign-in failed: \(error)")
+            Log.debug("❌ Apple sign-in failed: \(error)")
             appleSignInError = "Sign in with Apple isn't available right now. Please use email to continue."
         }
     }
@@ -656,15 +656,15 @@ struct ConfirmSignUpView: View {
                         do {
                             // Step 1: Confirm the signup
                             try await Amplify.Auth.confirmSignUp(for: email, confirmationCode: code)
-                            print("✅ Signup confirmed")
+                            Log.debug("✅ Signup confirmed")
                             
                             // Step 2: Sign out any existing session first
                             await Amplify.Auth.signOut()
-                            print("✅ Signed out any existing session")
+                            Log.debug("✅ Signed out any existing session")
                             
                             // Step 3: Sign in to establish a Cognito session
                             let signInResult = try await Amplify.Auth.signIn(username: email, password: password)
-                            print("✅ Signed in after confirmation")
+                            Log.debug("✅ Signed in after confirmation")
                             
                             if signInResult.isSignedIn {
                                 withAnimation(.none) { isLoading = false }

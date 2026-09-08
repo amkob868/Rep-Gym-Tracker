@@ -473,14 +473,14 @@ struct ActiveWorkoutView: View {
                 date: workoutDate,
                 exercises: completedExercises
             )
-            print("✅ Workout saved successfully!")
+            Log.debug("✅ Workout saved successfully!")
             await MainActor.run {
                 // Streak is recomputed from workout history when listeners
                 // refresh on this notification — no manual increment.
                 NotificationCenter.default.post(name: .workoutSaved, object: nil)
             }
         } catch {
-            print("❌ Error saving workout: \(error)")
+            Log.debug("❌ Error saving workout: \(error)")
             await MainActor.run { appState.handleAuthError(error) }
         }
     }

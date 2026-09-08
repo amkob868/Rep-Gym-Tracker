@@ -353,7 +353,7 @@ struct ProgressTrackingView: View {
             loadWorkouts()
         }
         .onReceive(NotificationCenter.default.publisher(for: .workoutSaved)) { _ in
-            print("📊 ProgressView received workout saved notification, refreshing...")
+            Log.debug("📊 ProgressView received workout saved notification, refreshing...")
             loadWorkouts()
         }
     }
@@ -378,11 +378,11 @@ struct ProgressTrackingView: View {
                 }
 
                 self.isLoadingWorkouts = false
-                print("✅ Loaded \(workouts.count) workouts")
+                Log.debug("✅ Loaded \(workouts.count) workouts")
 
             } catch {
                 self.isLoadingWorkouts = false
-                print("❌ Error loading workouts: \(error)")
+                Log.debug("❌ Error loading workouts: \(error)")
                 appState.handleAuthError(error)
             }
         }

@@ -165,7 +165,7 @@ struct LoginView: View {
                         .signIn,
                         onRequest: { request in
                             request.requestedScopes = [.fullName, .email]
-                            print("🍎 Sign in with Apple requested")
+                            Log.debug("🍎 Sign in with Apple requested")
                         },
                         onCompletion: handleSignInWithApple
                     )

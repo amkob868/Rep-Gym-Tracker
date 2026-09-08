@@ -258,7 +258,7 @@ struct SocialView: View {
                     self.isLoading = false
                     appState.handleAuthError(error)
                 }
-                print("❌ [SocialView] Error loading activity: \(error)")
+                Log.debug("❌ [SocialView] Error loading activity: \(error)")
             }
         }
     }

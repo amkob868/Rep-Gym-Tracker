@@ -203,7 +203,7 @@ struct WorkoutDayDetailView: View {
                     }
                 }
             } catch {
-                print("❌ [WorkoutDayDetailView] Error loading workout: \(error)")
+                Log.debug("❌ [WorkoutDayDetailView] Error loading workout: \(error)")
                 await MainActor.run { appState.handleAuthError(error) }
             }
         }
@@ -222,7 +222,7 @@ struct WorkoutDayDetailView: View {
                 dismiss()
             }
         } catch {
-            print("❌ [WorkoutDayDetailView] Error saving workout: \(error)")
+            Log.debug("❌ [WorkoutDayDetailView] Error saving workout: \(error)")
             await MainActor.run {
                 isSaving = false
                 appState.handleAuthError(error)

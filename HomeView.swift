@@ -102,7 +102,7 @@ struct HomeView: View {
     // MARK: - Today's Workout Card
     @ViewBuilder
     private var todayWorkoutCard: some View {
-        let _ = print("🎨 [HomeView] Rendering workout card - isLoading: \(isLoadingTodaysWorkout), workout exists: \(todaysWorkout != nil), exercises: \(todaysWorkout?.exercises?.count ?? 0)")
+        let _ = Log.debug("🎨 [HomeView] Rendering workout card - isLoading: \(isLoadingTodaysWorkout), workout exists: \(todaysWorkout != nil), exercises: \(todaysWorkout?.exercises?.count ?? 0)")
         
         if isLoadingTodaysWorkout {
             // Loading state
@@ -253,7 +253,7 @@ struct HomeView: View {
                 self.todaysWorkout = workout
             }
         } catch {
-            print("❌ [HomeView] Error fetching today's workout: \(error)")
+            Log.debug("❌ [HomeView] Error fetching today's workout: \(error)")
             await MainActor.run {
                 self.todaysWorkout = nil
                 appState.handleAuthError(error)
@@ -325,7 +325,7 @@ struct HomeView: View {
                     appState.streak = streak
                 }
             } catch {
-                print("❌ [HomeView] Error loading home stats: \(error)")
+                Log.debug("❌ [HomeView] Error loading home stats: \(error)")
                 await MainActor.run { appState.handleAuthError(error) }
             }
         }
@@ -1779,14 +1779,14 @@ struct WorkoutCalendarView: View {
                     self.workoutDates = dates
                     self.isLoading = false
                 }
-                print("✅ Loaded and cached \(workouts.count) workouts for calendar")
+                Log.debug("✅ Loaded and cached \(workouts.count) workouts for calendar")
                 
             } catch {
                 await MainActor.run {
                     self.isLoading = false
                     appState.handleAuthError(error)
                 }
-                print("❌ Error loading workouts for calendar: \(error)")
+                Log.debug("❌ Error loading workouts for calendar: \(error)")
             }
         }
     }
@@ -1988,9 +1988,9 @@ struct WeekCarouselView: View {
                 await MainActor.run {
                     self.completedDates = dates
                 }
-                print("✅ Loaded and cached \(workouts.count) workouts")
+                Log.debug("✅ Loaded and cached \(workouts.count) workouts")
             } catch {
-                print("❌ Failed to load completed dates: \(error)")
+                Log.debug("❌ Failed to load completed dates: \(error)")
             }
         }
     }
@@ -2715,16 +2715,16 @@ struct CompletedWorkoutView: View {
                     if let workout = workout {
                         self.workout = workout
                         self.loadingState = .loaded
-                        print("✅ Loaded workout: \(workout.name)")
+                        Log.debug("✅ Loaded workout: \(workout.name)")
                     } else {
                         self.loadingState = .empty
-                        print("⚠️ No workout found for date")
+                        Log.debug("⚠️ No workout found for date")
                     }
                 }
             } catch {
                 await MainActor.run {
                     self.loadingState = .error("Failed to load workout. Check your connection.")
-                    print("❌ Error loading workout: \(error)")
+                    Log.debug("❌ Error loading workout: \(error)")
                 }
             }
         }

@@ -19,9 +19,9 @@ struct ForgeApp: App {
             try Amplify.add(plugin: AWSCognitoAuthPlugin())
             try Amplify.add(plugin: AWSAPIPlugin())
             try Amplify.configure()
-            print("✅ Amplify configured successfully")
+            Log.debug("✅ Amplify configured successfully")
         } catch {
-            print("❌ Amplify configuration failed: \(error)")
+            Log.debug("❌ Amplify configuration failed: \(error)")
         }
     }
     
@@ -85,9 +85,9 @@ struct LaunchScreenCoordinator: View {
                         signedIn = false
                         _ = try? await Amplify.Auth.signOut()
                     }
-                    print(signedIn ? "✅ Existing session restored" : "ℹ️ No active/valid session")
+                    Log.debug(signedIn ? "✅ Existing session restored" : "ℹ️ No active/valid session")
                 } catch {
-                    print("❌ Session check failed: \(error)")
+                    Log.debug("❌ Session check failed: \(error)")
                     signedIn = false
                 }
 

@@ -95,23 +95,23 @@ struct DebugWorkoutsView: View {
         
         Task {
             do {
-                print("🔍 [Debug] Fetching all workouts...")
+                Log.debug("🔍 [Debug] Fetching all workouts...")
                 let workoutsArray = try await fetchWorkoutsSafely(limit: 100)
                 
                 await MainActor.run {
                     self.workouts = workoutsArray
                     self.isLoading = false
                 }
-                print("✅ [Debug] Loaded \(workoutsArray.count) workouts")
+                Log.debug("✅ [Debug] Loaded \(workoutsArray.count) workouts")
                 for workout in workoutsArray {
-                    print("   - \(workout.name) (\(workout.id))")
+                    Log.debug("   - \(workout.name) (\(workout.id))")
                 }
             } catch {
                 await MainActor.run {
                     self.errorMessage = error.localizedDescription
                     self.isLoading = false
                 }
-                print("❌ [Debug] Exception: \(error)")
+                Log.debug("❌ [Debug] Exception: \(error)")
             }
         }
     }

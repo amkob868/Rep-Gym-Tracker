@@ -69,7 +69,7 @@ final class AppState: ObservableObject {
     /// call from any data-loading error handler; it's a no-op otherwise.
     func handleAuthError(_ error: Error) {
         guard isSignedIn, AppState.isSessionExpired(error) else { return }
-        print("🔒 Session expired — signing out and returning to login")
+        Log.debug("🔒 Session expired — signing out and returning to login")
         isSignedIn = false
         Task { _ = try? await Amplify.Auth.signOut() }
     }

@@ -136,14 +136,14 @@ struct SettingsView: View {
                     do {
                         // Sign out from Amplify Auth first to clear Cognito session
                         await Amplify.Auth.signOut()
-                        print("✅ Signed out from Amplify Auth during reset")
+                        Log.debug("✅ Signed out from Amplify Auth during reset")
                     } catch {
-                        print("⚠️ Error signing out during reset: \(error)")
+                        Log.debug("⚠️ Error signing out during reset: \(error)")
                     }
                     
                     // Clear the workout cache to prevent data leakage between users
                     await WorkoutCache.shared.clearCache()
-                    print("✅ Cleared workout cache")
+                    Log.debug("✅ Cleared workout cache")
                     
                     // ✅ Clear ALL UserDefaults keys to prevent stale state restoration
                     await MainActor.run {
@@ -156,7 +156,7 @@ struct SettingsView: View {
                         defaults.removeObject(forKey: "height")
                         defaults.removeObject(forKey: "desiredWeight")
                         defaults.synchronize()
-                        print("✅ Cleared all UserDefaults keys")
+                        Log.debug("✅ Cleared all UserDefaults keys")
                         
                         // Then reset app state (this will re-save defaults with new values)
                         appState.isSignedIn = false
@@ -167,7 +167,7 @@ struct SettingsView: View {
                         appState.weight = 180
                         appState.height = 70
                         appState.desiredWeight = 170
-                        print("✅ Reset AppState to defaults")
+                        Log.debug("✅ Reset AppState to defaults")
                     }
                 }
             }
