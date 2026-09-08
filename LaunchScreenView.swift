@@ -8,7 +8,7 @@ struct LaunchScreenView: View {
                 .ignoresSafeArea()
             
             // Orange background image
-            Image("organgebackground")
+            Image("orangebackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()

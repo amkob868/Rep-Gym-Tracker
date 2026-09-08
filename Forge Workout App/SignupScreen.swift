@@ -1,6 +1,7 @@
 import SwiftUI
 import AuthenticationServices
 import Amplify
+import UIKit
 
 struct SignupScreen: View {
     @EnvironmentObject var appState: AppState
@@ -10,6 +11,7 @@ struct SignupScreen: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showConfirmation = false
+    @State private var appleSignInError: String?
 
     var body: some View {
         ZStack {
@@ -96,25 +98,23 @@ struct SignupScreen: View {
 
                 // Buttons
                 VStack(spacing: 12) {
-                    SignInWithAppleButton(
-                        .signIn,
-                        onRequest: { request in
-                            request.requestedScopes = [.fullName, .email]
-                        },
-                        onCompletion: { result in
-                            switch result {
-                            case .success(_):
-                                appState.isSignedIn = true
-                            case .failure(let error):
-                                print("Apple sign in failed: \(error)")
-                            }
+                    // Federated sign-in through Cognito. We only mark the user
+                    // signed in on a real Amplify result — no local shortcut.
+                    Button {
+                        Task { await signInWithApple() }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "apple.logo")
+                                .font(.system(size: 18, weight: .medium))
+                            Text("Sign in with Apple")
+                                .font(.system(size: 19, weight: .medium))
                         }
-                    )
-                    .signInWithAppleButtonStyle(.black)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .cornerRadius(14)
-                    
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(RoundedRectangle(cornerRadius: 14).fill(.black))
+                    }
+
                     GlassEffectContainer(spacing: 12) {
                         VStack(spacing: 12) {
                             Button {
@@ -168,6 +168,46 @@ struct SignupScreen: View {
             }
         }
         .statusBarHidden(true)
+        .alert(
+            "Sign in with Apple",
+            isPresented: Binding(
+                get: { appleSignInError != nil },
+                set: { if !$0 { appleSignInError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(appleSignInError ?? "")
+        }
+    }
+
+    /// Real federated Apple sign-in via Cognito. Only flips `isSignedIn` when
+    /// Amplify reports an actual signed-in session; otherwise surfaces an error
+    /// and leaves the user signed out (no fake local auth).
+    @MainActor
+    private func signInWithApple() async {
+        do {
+            let result = try await Amplify.Auth.signInWithWebUI(
+                for: .apple,
+                presentationAnchor: SignupScreen.presentationAnchor()
+            )
+            if result.isSignedIn {
+                appState.isSignedIn = true
+            } else {
+                appleSignInError = "Sign in with Apple needs another step. Please continue with email."
+            }
+        } catch {
+            print("❌ Apple sign-in failed: \(error)")
+            appleSignInError = "Sign in with Apple isn't available right now. Please use email to continue."
+        }
+    }
+
+    /// Key window used as the presentation anchor for the federated web flow.
+    private static func presentationAnchor() -> ASPresentationAnchor? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
     }
 }
 

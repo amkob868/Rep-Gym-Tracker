@@ -201,18 +201,6 @@ struct LoginView: View {
                             )
                     }
                     
-                    // DEBUG: Skip button for testing
-                    Button {
-                        withAnimation(.spring(response: 0.3)) {
-                            isAuthenticated = true
-                        }
-                    } label: {
-                        Text("Skip (Debug)")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.6))
-                            .padding(.top, 8)
-                    }
-                    
                     // Terms text
                     Text("By continuing you agree to our Terms of Service and Privacy Policy")
                         .font(.system(size: 12, weight: .regular))
@@ -247,49 +235,20 @@ struct LoginView: View {
     
     private func handleSignInWithApple(_ result: Result<ASAuthorization, Error>) {
         switch result {
-        case .success(let authorization):
-            print("✅ Sign in with Apple succeeded")
-            
-            if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                let userID = appleIDCredential.user
-                let email = appleIDCredential.email
-                let fullName = appleIDCredential.fullName
-                
-                print("User ID: \(userID)")
-                print("Email: \(email ?? "not provided")")
-                print("Name: \(fullName?.givenName ?? "") \(fullName?.familyName ?? "")")
-                
-                // TODO: Send credentials to your backend server for verification
-                // For now, just authenticate locally
-                withAnimation(.spring(response: 0.3)) {
-                    isAuthenticated = true
-                }
-            }
-            
+        case .success:
+            // Federated auth must be verified server-side (Cognito) before the
+            // user is considered signed in. This screen is no longer used — the
+            // live flow is SignupScreen — so we do not grant access here.
+            errorMessage = "Sign in with Apple isn't available on this screen."
+            showErrorAlert = true
+
         case .failure(let error):
-            print("❌ Sign in with Apple failed: \(error)")
-            
-            // Handle specific error codes
             let nsError = error as NSError
-            
-            if nsError.code == 1000 {
-                errorMessage = """
-                Sign in with Apple requires proper configuration:
-                
-                1. Add 'Sign in with Apple' capability in Xcode
-                2. Enable it in your App ID on developer.apple.com
-                3. Make sure you're signed in with an Apple ID on this device
-                
-                For now, you can use the 'Skip (Debug)' button to test the app.
-                """
-            } else if nsError.code == 1001 {
-                // User canceled
-                print("User canceled Sign in with Apple")
+            if nsError.code == 1001 {
+                // User canceled — nothing to show.
                 return
-            } else {
-                errorMessage = "Sign in failed: \(error.localizedDescription)\n\nYou can use 'Skip (Debug)' to continue testing."
             }
-            
+            errorMessage = "Sign in failed: \(error.localizedDescription)"
             showErrorAlert = true
         }
     }
