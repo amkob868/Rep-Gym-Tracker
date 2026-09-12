@@ -42,14 +42,6 @@ This repo intentionally **excludes the AWS configuration** (`amplifyconfiguratio
 
 Requires Xcode 16+ and iOS 17+.
 
-## Screenshots
-
-_Add screenshots here (e.g. `docs/home.png`, `docs/progress.png`) and reference them:_
-
-```
-![Home](docs/home.png) ![Progress](docs/progress.png)
-```
-
 ## License
 
 [MIT](LICENSE)
