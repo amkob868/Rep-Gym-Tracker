@@ -33,8 +33,6 @@
 		AE9C0EC22F7A63D300E3A0B3 /* amplifybackendapigymreptrackerschema.graphql in Resources */ = {isa = PBXBuildFile; fileRef = AE9C0EC12F7A63D300E3A0B3 /* amplifybackendapigymreptrackerschema.graphql */; };
 		AE9C0EC62F7A662E00E3A0B3 /* AWSAPIPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = AE9C0EC52F7A662E00E3A0B3 /* AWSAPIPlugin */; };
 		AED15E382F7AE0E2001E6236 /* WorkoutNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = AED15E372F7AE0E2001E6236 /* WorkoutNotifications.swift */; };
-		AED15E3A2F7AE10B001E6236 /* DebugWorkoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AED15E392F7AE10B001E6236 /* DebugWorkoutsView.swift */; };
-		AED15E3C2F7AE6C2001E6236 /* AmplifyHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AED15E3B2F7AE6C2001E6236 /* AmplifyHelpers.swift */; };
 		E4D7731749EF7F93DBA92813 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB0542A3C997BD99DA7A842 /* UserProfile.swift */; };
 		FA8082FD1FAAE0AD7C5908CA /* CompletedExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53B738402AE46B35B31C3D9 /* CompletedExercise.swift */; };
 		FBE61D752AA29CD5D05C0279 /* CompletedSet+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA128648EDC4BFF374819E3 /* CompletedSet+Schema.swift */; };
@@ -65,8 +63,6 @@
 		AE9C0EA72F75D51000E3A0B3 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		AE9C0EC12F7A63D300E3A0B3 /* amplifybackendapigymreptrackerschema.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = amplifybackendapigymreptrackerschema.graphql; sourceTree = "<group>"; };
 		AED15E372F7AE0E2001E6236 /* WorkoutNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutNotifications.swift; sourceTree = "<group>"; };
-		AED15E392F7AE10B001E6236 /* DebugWorkoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugWorkoutsView.swift; sourceTree = "<group>"; };
-		AED15E3B2F7AE6C2001E6236 /* AmplifyHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmplifyHelpers.swift; sourceTree = "<group>"; };
 		B45AB7745C5052CFAF553596 /* AmplifyModels.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
 		D53B738402AE46B35B31C3D9 /* CompletedExercise.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = CompletedExercise.swift; path = amplify/generated/models/CompletedExercise.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,8 +149,6 @@
 				AE9C0EC12F7A63D300E3A0B3 /* amplifybackendapigymreptrackerschema.graphql */,
 				284288CEDCFD18F62FFC5524 /* AmplifyModels */,
 				AED15E372F7AE0E2001E6236 /* WorkoutNotifications.swift */,
-				AED15E392F7AE10B001E6236 /* DebugWorkoutsView.swift */,
-				AED15E3B2F7AE6C2001E6236 /* AmplifyHelpers.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -261,7 +255,6 @@
 			files = (
 				AE9C0E312F73570300E3A0B3 /* ForgeTheme.swift in Sources */,
 				AE9C0E332F73570300E3A0B3 /* FORGEApp.swift in Sources */,
-				AED15E3A2F7AE10B001E6236 /* DebugWorkoutsView.swift in Sources */,
 				AE9C0E362F73570300E3A0B3 /* MainTabView.swift in Sources */,
 				AE9C0E742F749F5600E3A0B3 /* LaunchScreenView.swift in Sources */,
 				AE9C0E372F73570300E3A0B3 /* AppState.swift in Sources */,
@@ -269,7 +262,6 @@
 				AE9C0EA82F75D51000E3A0B3 /* OnboardingFlowView.swift in Sources */,
 				AE9C0E962F74B15200E3A0B3 /* SettingsView.swift in Sources */,
 				AE9C0E932F74B13A00E3A0B3 /* ProfileView.swift in Sources */,
-				AED15E3C2F7AE6C2001E6236 /* AmplifyHelpers.swift in Sources */,
 				AE9C0EA02F74B44700E3A0B3 /* ProgressView.swift in Sources */,
 				AED15E382F7AE0E2001E6236 /* WorkoutNotifications.swift in Sources */,
 				642481C5D38A08BEBA4C3CBB /* AmplifyModels.swift in Sources */,
