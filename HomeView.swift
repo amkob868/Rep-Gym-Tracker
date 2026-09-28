@@ -12,6 +12,9 @@ struct HomeView: View {
     @State private var todaysWorkout: Workout?
     @State private var isLoadingTodaysWorkout = false
     @State private var personalRecords: [PersonalRecord] = []
+    @State private var insightMessage: String?
+    @State private var showInsight = false
+    @State private var dismissedInsight: String?
 
     // Get current date info
     private var currentDayOfWeek: String {
@@ -71,6 +74,7 @@ struct HomeView: View {
                 .padding(.top, 0)
             }
         }
+        .overlay(alignment: .top) { insightBubble }
         .sheet(isPresented: $showDayDetail) {
             TodayWorkoutNavigator()
                 .environmentObject(appState)
@@ -320,14 +324,48 @@ struct HomeView: View {
                 let workouts = try await WorkoutService.fetchAllWorkouts(limit: 100)
                 let records = WorkoutService.personalRecords(from: workouts)
                 let streak = WorkoutService.currentStreak(from: workouts)
+                let topInsight = InsightEngine.insights(from: workouts).first
                 await MainActor.run {
                     self.personalRecords = records
                     appState.streak = streak
                 }
+                await updateInsight(topInsight)
             } catch {
                 Log.debug("❌ [HomeView] Error loading home stats: \(error)")
                 await MainActor.run { appState.handleAuthError(error) }
             }
+        }
+    }
+
+    /// Phrase the top insight (via the on-device model when available) and show
+    /// it in the bubble, unless the user already dismissed that same message.
+    private func updateInsight(_ insight: WorkoutInsight?) async {
+        guard let insight else {
+            await MainActor.run { withAnimation { showInsight = false } }
+            return
+        }
+        let text = await InsightPhraser.phrase(insight)
+        await MainActor.run {
+            insightMessage = text
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                showInsight = text != dismissedInsight
+            }
+        }
+    }
+
+    // MARK: - AI Insight bubble
+    @ViewBuilder
+    private var insightBubble: some View {
+        if showInsight, let message = insightMessage {
+            InsightBubbleView(message: message) {
+                withAnimation(.spring(response: 0.3)) {
+                    showInsight = false
+                    dismissedInsight = message
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
 }
