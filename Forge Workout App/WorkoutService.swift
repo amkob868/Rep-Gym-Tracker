@@ -237,8 +237,10 @@ enum WorkoutService {
     static func personalRecords(from workouts: [Workout]) -> [PersonalRecord] {
         var best: [String: PersonalRecord] = [:]
         for (exercise, date) in loggedExercises(in: workouts) {
-            let key = exercise.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let key = ExerciseCatalog.canonicalKey(for: exercise.name)
             guard !key.isEmpty else { continue }
+            // Prefer the catalog's clean display name when the exercise is known.
+            let display = ExerciseCatalog.lookup(name: exercise.name)?.name ?? exercise.name
             for set in exercise.sets ?? [] {
                 guard set.weight > 0 else { continue }
                 if let current = best[key],
@@ -246,7 +248,7 @@ enum WorkoutService {
                     continue
                 }
                 best[key] = PersonalRecord(
-                    exercise: exercise.name,
+                    exercise: display,
                     weight: set.weight,
                     reps: set.reps,
                     date: date
@@ -310,26 +312,32 @@ enum WorkoutService {
         return streak
     }
 
-    /// Distinct exercise names, most frequently logged first.
+    /// Distinct exercises (by canonical identity), most frequently logged first,
+    /// returned as clean display names.
     static func exerciseNames(from workouts: [Workout]) -> [String] {
-        var counts: [String: Int] = [:]
+        var counts: [String: (display: String, count: Int)] = [:]
         for (exercise, _) in loggedExercises(in: workouts) {
-            counts[exercise.name, default: 0] += 1
+            let key = ExerciseCatalog.canonicalKey(for: exercise.name)
+            let display = ExerciseCatalog.lookup(name: exercise.name)?.name ?? exercise.name
+            var entry = counts[key] ?? (display: display, count: 0)
+            entry.count += 1
+            counts[key] = entry
         }
-        return counts.sorted { $0.value > $1.value }.map { $0.key }
+        return counts.values.sorted { $0.count > $1.count }.map { $0.display }
     }
 
     /// Top-set weight per workout for a single exercise, oldest first.
     /// Pass `since` to limit to a time window (nil = all time).
     static func weightProgression(for exerciseName: String, in workouts: [Workout], since: Date? = nil) -> [(date: Date, weight: Double)] {
-        workouts
+        let targetKey = ExerciseCatalog.canonicalKey(for: exerciseName)
+        return workouts
             .sorted { loggedDay(of: $0) < loggedDay(of: $1) }
             .compactMap { workout -> (date: Date, weight: Double)? in
                 let date = loggedDay(of: workout)
                 if let since, date < since { return nil }
                 let topSet = (workout.exercises ?? [])
                     .compactMap { $0 }
-                    .filter { $0.name == exerciseName }
+                    .filter { ExerciseCatalog.canonicalKey(for: $0.name) == targetKey }
                     .flatMap { $0.sets ?? [] }
                     .map(\.weight)
                     .max()

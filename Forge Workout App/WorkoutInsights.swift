@@ -21,6 +21,12 @@ enum MuscleGroup: String, CaseIterable {
         }
     }
 
+    /// Muscle group for an exercise name — prefers the exact catalog entry and
+    /// falls back to keyword inference for custom exercises.
+    static func forExercise(named name: String) -> MuscleGroup {
+        ExerciseCatalog.lookup(name: name)?.muscleGroup ?? infer(from: name)
+    }
+
     /// Best-guess muscle group for an exercise name. Order matters: more
     /// specific keywords are checked before generic ones.
     static func infer(from exerciseName: String) -> MuscleGroup {
@@ -91,8 +97,10 @@ enum InsightEngine {
         for workout in workouts {
             let day = calendar.startOfDay(for: WorkoutService.loggedDay(of: workout))
             for exercise in (workout.exercises ?? []).compactMap({ $0 }) {
-                let key = exercise.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                let key = ExerciseCatalog.canonicalKey(for: exercise.name)
                 guard !key.isEmpty else { continue }
+                // Prefer the catalog's clean display name when the exercise is known.
+                let display = ExerciseCatalog.lookup(name: exercise.name)?.name ?? exercise.name
 
                 // Best set that day = heaviest weight, most reps at that weight.
                 let sets = exercise.sets ?? []
@@ -100,7 +108,7 @@ enum InsightEngine {
                 let reps = sets.filter { $0.weight == topWeight }.map(\.reps).max() ?? 0
                 let candidate = DaySet(day: day, weight: topWeight, reps: reps)
 
-                var entry = byKey[key] ?? (display: exercise.name, byDay: [:])
+                var entry = byKey[key] ?? (display: display, byDay: [:])
                 if let existing = entry.byDay[day] {
                     if candidate.weight > existing.weight ||
                         (candidate.weight == existing.weight && candidate.reps > existing.reps) {
@@ -126,7 +134,7 @@ enum InsightEngine {
         for workout in workouts {
             let day = WorkoutService.loggedDay(of: workout)
             for exercise in (workout.exercises ?? []).compactMap({ $0 }) {
-                let group = MuscleGroup.infer(from: exercise.name)
+                let group = MuscleGroup.forExercise(named: exercise.name)
                 guard group != .other else { continue }
                 if let current = lastTrained[group] {
                     lastTrained[group] = max(current, day)

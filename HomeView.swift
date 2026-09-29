@@ -1075,6 +1075,50 @@ struct AddExerciseView: View {
         .padding(.bottom, 12)
     }
 
+    // MARK: - Exercise autocomplete
+    /// Catalog suggestions shown while typing. Hides once the text exactly
+    /// matches a known exercise (or was picked from the list), so custom names
+    /// can still be entered freely.
+    @ViewBuilder
+    private var suggestionList: some View {
+        let matches = ExerciseCatalog.search(exerciseName)
+        if !exerciseName.isEmpty, ExerciseCatalog.lookup(name: exerciseName) == nil, !matches.isEmpty {
+            VStack(spacing: 0) {
+                ForEach(matches) { match in
+                    Button {
+                        exerciseName = match.name
+                    } label: {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(match.name)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                Text(match.muscleGroup.display.uppercased())
+                                    .font(.system(size: 10, weight: .bold))
+                                    .tracking(1)
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(dayColor)
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    if match.id != matches.last?.id {
+                        Divider().opacity(0.3)
+                    }
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 12).fill(Color.gray.opacity(0.08))
+            )
+        }
+    }
+
     // MARK: - Workout info summary
     private var workoutInfoSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -1102,6 +1146,8 @@ struct AddExerciseView: View {
                         .contentShape(Rectangle())
                 }
             }
+
+            suggestionList
 
             HStack(spacing: 8) {
                 Image(systemName: "dumbbell.fill")
