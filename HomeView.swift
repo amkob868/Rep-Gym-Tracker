@@ -954,9 +954,6 @@ struct AddExerciseView: View {
     @State private var defaultWeight: Double = 50.0
     @State private var setConfigurations: [SetConfiguration] = []
     @State private var completedSets: Set<Int> = []
-    @State private var showWeightSlider = false
-    @State private var showRepsSlider = false
-    @State private var editingSetIndex = 0
     @State private var showCancelConfirmation = false
     
     init(dayColor: Color, onAdd: @escaping (EditableExercise) -> Void) {
@@ -990,33 +987,8 @@ struct AddExerciseView: View {
                     }
                     .padding(.top, 8)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
-        }
-        .sheet(isPresented: $showWeightSlider) {
-            SliderEditorSheet(
-                title: "SET \(editingSetIndex + 1) - WEIGHT",
-                value: Binding(
-                    get: { setConfigurations[editingSetIndex].weight },
-                    set: { setConfigurations[editingSetIndex].weight = $0 }
-                ),
-                range: 0...500,
-                step: 2.5,
-                unit: "LBS",
-                color: dayColor
-            )
-        }
-        .sheet(isPresented: $showRepsSlider) {
-            SliderEditorSheet(
-                title: "SET \(editingSetIndex + 1) - REPS",
-                value: Binding(
-                    get: { Double(setConfigurations[editingSetIndex].reps) },
-                    set: { setConfigurations[editingSetIndex].reps = Int($0) }
-                ),
-                range: 1...50,
-                step: 1,
-                unit: "REPS",
-                color: dayColor
-            )
         }
         .alert("Discard Exercise?", isPresented: $showCancelConfirmation) {
             Button("Keep Editing", role: .cancel) { }
@@ -1272,48 +1244,41 @@ struct AddExerciseView: View {
                 .foregroundColor(.gray)
                 .frame(maxWidth: .infinity)
 
-            // Weight display - tappable
-            Button {
-                editingSetIndex = setIndex
-                showWeightSlider = true
-            } label: {
-                Text(config.weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(config.weight))" : String(format: "%.1f", config.weight))
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .frame(width: 100, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.08))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                            )
-                    )
-            }
-            .buttonStyle(.plain)
+            // Weight - type it in
+            TextField("0", value: Binding(
+                get: { setConfigurations[setIndex].weight },
+                set: { setConfigurations[setIndex].weight = max(0, $0) }
+            ), format: .number)
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.center)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .frame(width: 100, height: 50)
+                .background(setCellBackground)
 
-            // Reps display - tappable
-            Button {
-                editingSetIndex = setIndex
-                showRepsSlider = true
-            } label: {
-                Text("\(config.reps)")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .frame(width: 100, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.08))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                            )
-                    )
-            }
-            .buttonStyle(.plain)
+            // Reps - type it in
+            TextField("0", value: Binding(
+                get: { setConfigurations[setIndex].reps },
+                set: { setConfigurations[setIndex].reps = max(0, $0) }
+            ), format: .number)
+                .keyboardType(.numberPad)
+                .multilineTextAlignment(.center)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .frame(width: 100, height: 50)
+                .background(setCellBackground)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
+    }
+
+    private var setCellBackground: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color.gray.opacity(0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
     }
 
     private var adjustControls: some View {
@@ -2933,115 +2898,6 @@ struct HandDrawnCircle: Shape {
         }
         
         return path
-    }
-}
-
-// MARK: - Slider Editor Sheet
-struct SliderEditorSheet: View {
-    @Environment(\.dismiss) var dismiss
-    let title: String
-    @Binding var value: Double
-    let range: ClosedRange<Double>
-    let step: Double
-    let unit: String
-    let color: Color
-    
-    var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
-            
-            VStack(spacing: 40) {
-                Spacer()
-                
-                // Header
-                VStack(spacing: 8) {
-                    Text(title)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(color)
-                    
-                    Text(unit)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.gray)
-                }
-                
-                // Large value display
-                Text(value.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(value))" : String(format: "%.1f", value))
-                    .font(.system(size: 80, weight: .bold))
-                    .foregroundColor(color)
-                    .animation(.spring(response: 0.3), value: value)
-                
-                // Slider
-                VStack(spacing: 16) {
-                    Slider(value: $value, in: range, step: step)
-                        .tint(color)
-                        .padding(.horizontal, 40)
-                    
-                    // Range labels
-                    HStack {
-                        Text("\(Int(range.lowerBound))")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray)
-                        
-                        Spacer()
-                        
-                        Text("\(Int(range.upperBound))")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.horizontal, 40)
-                }
-                .padding(.vertical, 20)
-                
-                // Quick adjustment buttons
-                HStack(spacing: 20) {
-                    Button {
-                        let newValue = value - step
-                        if newValue >= range.lowerBound {
-                            value = newValue
-                        }
-                    } label: {
-                        Image(systemName: "minus.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(value > range.lowerBound ? color : .gray.opacity(0.3))
-                    }
-                    .disabled(value <= range.lowerBound)
-                    
-                    Button {
-                        let newValue = value + step
-                        if newValue <= range.upperBound {
-                            value = newValue
-                        }
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(value < range.upperBound ? color : .gray.opacity(0.3))
-                    }
-                    .disabled(value >= range.upperBound)
-                }
-                .padding(.top, 20)
-                
-                Spacer()
-                
-                // Done button
-                Button {
-                    dismiss()
-                } label: {
-                    Text("DONE")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(color)
-                        )
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 40)
-            }
-        }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 }
 
